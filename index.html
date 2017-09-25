@@ -1,0 +1,432 @@
+<html>
+
+<head>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 1000px;
+        }
+
+        td {
+            border: 1px solid black;
+            padding: 3px;
+            text-align: left;
+            vertical-align: top;
+            height: 100px;
+            width: 50px;
+        }
+
+        th {
+            border: 1px solid black;
+            padding: 3px;
+            font-weight: bold;
+            background-color: #E6E6E6;
+            width: 110px;
+        }
+        
+        #namemonth {
+            font-size: 24px;
+            margin-left: 10px;
+            display: inline-block;
+            word-wrap: normal;
+            width: 170px;
+            height: 20px;
+        }
+        
+        #prev {
+            display: inline-block;
+        }
+        
+        #next {
+            margin-left: 10px;
+            display: inline-block;
+        }
+        
+        .now {
+            background-color: #E6E6E6;
+        }
+
+        #butNow {
+            display: inline-block;
+        }
+        
+        #myevent {
+            word-wrap: break-word;
+            overflow: auto;
+            height: 50px;
+            margin: 0px;
+            width: 130px;
+        }
+
+        .sel {
+            background-color:#afd5fa;
+            height: 50px;
+            margin: 0px;
+        }
+
+        .zero {
+            height: 100px;
+            margin: 0px;
+            width: 140px;
+        }
+
+        #notdo {
+            width: 100px;
+            height: 35px;
+            display: inline-block;
+        }
+
+        #yesdo {
+            width: 100px;
+            height: 35px;
+            display: inline-block;
+        }
+        
+        body {
+          font-family: 'Palatino Linotype', serif;
+          max-width: 1000px;
+          padding: 0px 30px;
+        }
+
+        h1 {
+          margin-bottom: 0px;
+        }
+
+        p {
+            margin-right: 0px;
+        }
+
+        input:focus {
+          background: #eaeaea;
+        }
+
+        input, textarea {
+          width: 249px;
+        }
+
+        textarea {
+          height: 100px;
+        }
+
+        select {
+          width: 254px;
+        }
+
+        .modalDialog {
+            position: fixed;
+            font-family: Arial, Helvetica, sans-serif;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 99999;
+            -webkit-transition: opacity 400ms ease-in;
+            -moz-transition: opacity 400ms ease-in;
+            transition: opacity 400ms ease-in;
+            display: none;
+            pointer-events: none;
+        }        
+
+        .modalDialog:target {
+            display: block;
+            pointer-events: auto;
+        }
+        
+        #idAdd {
+            background-color: rgb(17, 107, 230);
+            color: aliceblue;
+            display: inline-block;
+            margin-top: 30px;
+            margin-left: 30px;
+        }
+
+        #idImg {
+            position: absolute;
+            margin-top: 22px;
+            margin-left: 460px;
+        }
+        
+        #idView {
+            background-color: rgb(17, 107, 230);
+            color: aliceblue;
+            display: inline-block;
+        }
+        
+        #idSearch {
+            display: inline-block;
+            margin-left: 500px;
+            margin-bottom: 0px;
+        }
+        
+        #idHeader {
+            background-color: #f0f0f0;
+            height: 70px;
+        }
+
+        .idActiv {
+            background-color: #b0ffc2;
+            border: 5px solid red;
+        }
+        
+
+        .modalDialog > div {
+            width: 400px;
+            position: relative;
+            margin: 10% auto;
+            padding: 5px 20px 13px 20px;
+            border-radius: 10px;
+            background: #fff;
+            background: -moz-linear-gradient(#fff, #999);
+            background: -webkit-linear-gradient(#fff, #999);
+            background: -o-linear-gradient(#fff, #999);
+        }        
+
+        .close {
+            background: #606061;
+            color: #FFFFFF;
+            line-height: 25px;
+            position: absolute;
+            right: -12px;
+            text-align: center;
+            top: -10px;
+            width: 24px;
+            text-decoration: none;
+            font-weight: bold;
+            -webkit-border-radius: 12px;
+            -moz-border-radius: 12px;
+            border-radius: 12px;
+            -moz-box-shadow: 1px 1px 3px #000;
+            -webkit-box-shadow: 1px 1px 3px #000;
+            box-shadow: 1px 1px 3px #000;
+        }
+
+        .close:hover { background: #00d9ff; }
+        
+        
+    </style>
+    <meta charset="utf-8">
+    <SCRIPT LANGUAGE="JAVASCRIPT">
+        //Информация событий
+        var concertMonth = new Array (1, 1,3,4,5,8,11,9, 9,9, 9)
+        var concertDay = new Array   (1,13,8,1,1,3,17,1,19,9,20)
+        var concertInfo = new Array ("Новый год",
+                                     "Старый Новый Год",
+                                     "Женский день",
+                                     "День смеха",
+                                     "День трудящихся",
+                                     "Мой день рождения",
+                                     "Международный день студентов",
+                                     "День знаний",
+                                     "День рождения 'Смайлика'",
+                                     "День тестировщика ПО",
+                                     "День HR-менеджера"
+                                     )
+    </script>
+    
+</head>
+
+<body>
+    <div id="idHeader">
+        <button id="idAdd">Добавить</button>
+        <button id="idView">Обновить</button>
+        <img id="idImg" src="search.jpg">
+        <input type="search" id="idSearch" placeholder="Событие, дата или участник" />        
+        
+    </div>
+    <div id="openModal" class="modalDialog">
+        <div>
+            <a href="#close" title="Закрыть" class="close">X</a>
+            <br><br>
+            <input id="eventWin" placeholder="Событие"><br><br>
+            <input id="dateWin" type="date" placeholder="ДД-ММ-ГГГГ"><br><br>
+            <input id="dotWin" placeholder="Участники"><br><br><br><br>
+            <textarea id="commWin" placeholder="Описание"></textarea>
+            <br><br><br>
+
+            <p>
+              <input type="button" id="yesdo" value="Готово">
+              <input type="button" id="notdo" value="Удалить">
+            </p>
+        </div>
+    </div>
+    <div>
+        <button id="prev"><</button>
+        <p id="namemonth"></p>
+        <button id="next">></button>
+        <button id="butNow">Сегодня</button>
+    </div>   
+    
+    
+    <div id="calendar"></div>
+
+    <script>
+        function createCalendar(id, year, varmon, nowday, nowmon) {
+            var elem = document.getElementById(id);
+            var d = new Date(year, varmon);
+
+            var table = '<table><tr><th>понедельник</th><th>вторник</th><th>среда</th><th>четверг</th><th>пятница</th><th>суббота</th><th>воскресенье</th></tr><tr>';
+
+            // заполнить первый ряд от понедельника
+            // и до дня, с которого начинается месяц
+            // * * * | 1  2  3  4
+            for (var i = 0; i < getDay(d); i++) {
+            table += '<td></td>';
+            }
+            
+            // ячейки календаря с датами
+            while (d.getMonth() == varmon) {
+                if ((d.getDate() == nowday) && (d.getMonth() == nowmon)) {
+                    var flag = 0;
+                    for (var y = 0; y < concertDay.length; y++) {
+                        if ((d.getDate() == concertDay[y]) && (d.getMonth() ==(concertMonth[y]-1))) {
+                            table += '<td class="sel now">' + d.getDate() + '<p id="myevent">' + concertInfo[y] + '</p>' + '</td>';
+                            flag = 1;
+                        }
+                    }
+                    if (flag == 0) {
+                        table += '<td class="zero now">' + d.getDate() + '</td>';                        
+                    }
+                }
+                else {
+                    var flag = 0;
+                    for (var y = 0; y < concertDay.length; y++) {
+                        if ((d.getDate() == concertDay[y]) && (d.getMonth() ==(concertMonth[y]-1))) {
+                            table += '<td class="sel">' + d.getDate() + '<p id="myevent">' + concertInfo[y] + '</p>' + '</td>';
+                            flag = 1;
+                        }
+                    }
+                    if (flag == 0) {
+                        table += '<td class="zero">' + d.getDate() + '</td>';
+                    }
+                }
+
+                if (getDay(d) % 7 == 6) { // вс, последний день - перевод строки
+                    table += '</tr><tr>';
+                }
+
+                d.setDate(d.getDate() + 1);
+            }
+
+            // добить таблицу пустыми ячейками, если нужно
+            if (getDay(d) != 0) {
+                for (var i = getDay(d); i < 7; i++) {
+                  table += '<td></td>';
+                }
+            }
+
+            // закрыть таблицу
+            table += '</tr></table>';
+
+            // только одно присваивание innerHTML
+            elem.innerHTML = table;
+        }
+
+        function getDay(date) { // получить номер дня недели, от 0(пн) до 6(вс)
+            var day = date.getDay();
+            if (day == 0) day = 7;
+            return day - 1;
+        }
+
+        function funcMonth(month) { // получить номер дня недели, от 0(пн) до 6(вс)
+            switch (month)
+                {
+                  case  0: fMonth="Январь"; break;
+                  case  1: fMonth="Февраль"; break;
+                  case  2: fMonth="Март"; break;
+                  case  3: fMonth="Апрель"; break;
+                  case  4: fMonth="Май"; break;
+                  case  5: fMonth="Июнь"; break;
+                  case  6: fMonth="Июль"; break;
+                  case  7: fMonth="Август"; break;
+                  case  8: fMonth="Сентябрь"; break;
+                  case  9: fMonth="Октябрь"; break;
+                  case 10: fMonth="Ноябрь"; break;
+                  case 11: fMonth="Декабрь"; break;
+                }
+            return fMonth;
+        }
+
+
+        data = new Date();
+        var nowmonth = data.getMonth();
+        var nowday = data.getDate();
+        fMonth = funcMonth(nowmonth);
+        str = fMonth + " 2017";
+        document.getElementById('namemonth').innerHTML = str;
+        var varmonth = nowmonth;
+        createCalendar("calendar", 2017, varmonth, nowday, nowmonth);
+
+        var buttonPrev = document.getElementById('prev');
+        var buttonNext = document.getElementById('next');
+        var buttonNow = document.getElementById('butNow');
+        var varyesdo = document.getElementById('yesdo');
+        var buttonAdd = document.getElementById('idAdd');
+        var varHead = document.getElementById('idHeader');
+        
+        buttonAdd.onclick = function(){ 
+            location.href = "#openModal";
+        }
+        
+
+        varyesdo.onclick = function(){ 
+            var evF = document.getElementById("eventWin").value;
+            var dateF = document.getElementById("dateWin").value;
+            var dotF = document.getElementById("dotWin").value;
+            var commF = document.getElementById("commWin").value;
+            var str = evF+" "+dateF+" "+dotF+" "+commF;
+            var dateDay = dateF.substr(8,2);
+            var dateMon = dateF.substr(5,2);
+            var numDay = +dateDay;
+            var numMon = +dateMon;
+            var flag = 0;
+            for (var y = 0; y < concertDay.length; y++) {
+                if ((numDay == concertDay[y]) && (numMon == concertMonth[y])) {
+                    concertInfo[y] = concertInfo[y] + str;
+                    flag = 1;
+                }
+            }
+            if (flag == 0) {
+                concertDay[concertDay.length] = numDay;
+                concertMonth[concertMonth.length] = numMon;
+                concertInfo[concertInfo.length] = str;
+            }
+            
+            document.getElementById("eventWin").value = "";
+            document.getElementById("dateWin").value = "";
+            document.getElementById("dotWin").value = "";
+            document.getElementById("commWin").value = "";
+            location.href = "#close";
+            createCalendar("calendar", 2017, varmonth, nowday, nowmonth);
+        }
+        
+        buttonPrev.onclick = function(){ 
+            if (varmonth > 0) {varmonth--;}
+            else {varmonth = 11};
+            fMonth = funcMonth(varmonth);
+            str = fMonth + " 2017";
+            document.getElementById('namemonth').innerHTML = str;
+            createCalendar("calendar", 2017, varmonth, nowday, nowmonth);
+        };
+        
+        buttonNext.onclick = function(){ 
+            if (varmonth < 11) {varmonth++;}
+            else {varmonth = 0};
+            fMonth = funcMonth(varmonth);
+            str = fMonth + " 2017";
+            document.getElementById('namemonth').innerHTML = str;
+            createCalendar("calendar", 2017, varmonth, nowday, nowmonth);
+        };
+        
+        buttonNow.onclick = function(){ 
+            fMonth = funcMonth(nowmonth);
+            str = fMonth + " 2017";
+            document.getElementById('namemonth').innerHTML = str;
+            createCalendar("calendar", 2017, nowmonth, nowday, nowmonth);
+        };
+        
+    </script>
+
+</body>
+
+</html>
